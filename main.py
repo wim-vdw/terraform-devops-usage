@@ -28,13 +28,17 @@ def print_terraform_modules():
         'Authorization': 'Bearer ' + tfe_token,
         'Content-Type': 'application/json',
     }
-    response = requests.get(url, headers=headers)
-    if response.ok:
-        print(response.json())
-        for module in response.json()['data']:
-            print(module)
-    else:
-        print('Error for:', url)
+    while True:
+        response = requests.get(url, headers=headers)
+        if response.ok:
+            for module in response.json()['data']:
+                print(module['attributes']['name'], module['attributes']['version-statuses'][0]['version'])
+            url = response.json()['links']['next']
+            if not url:
+                break
+        else:
+            print('Error for:', url)
+            break
 
 
 if __name__ == '__main__':
