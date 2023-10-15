@@ -41,7 +41,29 @@ def print_terraform_modules():
             break
 
 
+def print_terraform_workspaces():
+    print(f'Terraform Enterprise workspaces for organization {tfe_organization}:')
+    url = f'https://{tfe_domain_name}/api/v2/organizations/{tfe_organization}/workspaces'
+    headers = {
+        'Authorization': 'Bearer ' + tfe_token,
+        'Content-Type': 'application/json',
+    }
+    while True:
+        response = requests.get(url, headers=headers)
+        if response.ok:
+            for workspace in response.json()['data']:
+                print(workspace['attributes']['name'], workspace['attributes']['terraform-version'])
+            url = response.json()['links']['next']
+            if not url:
+                break
+        else:
+            print('Error for:', url)
+            break
+
+
 if __name__ == '__main__':
     print_devops_projects()
     print()
     print_terraform_modules()
+    print()
+    print_terraform_workspaces()
