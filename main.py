@@ -21,6 +21,23 @@ def print_devops_projects():
         print('Error for:', url)
 
 
+def print_devops_repositories():
+    print(f'Azure DevOps repositories for organization {az_devops_organization}:')
+    project = 'AzureFoundation'
+    url = f'https://almsearch.dev.azure.com/{az_devops_organization}/{project}/_apis/search/codesearchresults?api-version=6.0-preview.1'
+    headers = {
+        'Content-Type': 'application/json',
+    }
+    basic = HTTPBasicAuth('', az_devops_pat)
+    response = requests.post(url, auth=basic, headers=headers, data={'searchText': 'Dashboard', 'includeFacets': True})
+    if response.ok and response.status_code == 200:
+        print(response.json())
+    else:
+        print('Error for:', url)
+        print(response.json())
+        print(response.content)
+
+
 def print_terraform_modules():
     print(f'Terraform Enterprise modules for organization {tfe_organization}:')
     url = f'https://{tfe_domain_name}/api/v2/organizations/{tfe_organization}/registry-modules'
@@ -67,3 +84,5 @@ if __name__ == '__main__':
     print_terraform_modules()
     print()
     print_terraform_workspaces()
+    print()
+    print_devops_repositories()
