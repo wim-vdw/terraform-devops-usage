@@ -43,13 +43,17 @@ def print_terraform_modules():
     url = f'https://{tfe_domain_name}/api/v2/organizations/{tfe_organization}/registry-modules'
     headers = {
         'Authorization': 'Bearer ' + tfe_token,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/vnd.api+json',
     }
     while True:
         response = requests.get(url, headers=headers)
         if response.ok:
             for module in response.json()['data']:
-                print(module['attributes']['name'], module['attributes']['version-statuses'][0]['version'])
+                name = module['attributes']['name']
+                provider = module['attributes']['provider']
+                version = module['attributes']['version-statuses'][0]['version']
+                search = f'tfe.azure.bnl-ms.myengie.com/{tfe_organization}/{name}/{provider}'
+                print(name, provider, version, search)
             url = response.json()['links']['next']
             if not url:
                 break
@@ -63,13 +67,35 @@ def print_terraform_workspaces():
     url = f'https://{tfe_domain_name}/api/v2/organizations/{tfe_organization}/workspaces'
     headers = {
         'Authorization': 'Bearer ' + tfe_token,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/vnd.api+json',
     }
     while True:
         response = requests.get(url, headers=headers)
         if response.ok:
             for workspace in response.json()['data']:
-                print(workspace['attributes']['name'], workspace['attributes']['terraform-version'])
+                name = workspace['attributes']['name']
+                workspace_id = workspace['id']
+                print(name, workspace_id)
+            url = response.json()['links']['next']
+            if not url:
+                break
+        else:
+            print('Error for:', url)
+            break
+
+
+def print_terraform_workspace_resources(workspace_id):
+    print(f'Terraform Enterprise resources for workspace {workspace_id}:')
+    url = f'https://{tfe_domain_name}/api/v2/workspaces/{workspace_id}/resources'
+    headers = {
+        'Authorization': 'Bearer ' + tfe_token,
+        'Content-Type': 'application/vnd.api+json',
+    }
+    while True:
+        response = requests.get(url, headers=headers)
+        if response.ok:
+            for resource in response.json()['data']:
+                print(resource)
             url = response.json()['links']['next']
             if not url:
                 break
@@ -86,3 +112,5 @@ if __name__ == '__main__':
     print_terraform_workspaces()
     print()
     print_devops_repositories()
+    print()
+    print_terraform_workspace_resources('ws-hHbeMQKxPJvuLbUb')
