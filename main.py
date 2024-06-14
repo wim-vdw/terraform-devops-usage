@@ -43,6 +43,17 @@ def print_devops_search_results(search_text):
         print(response.content)
 
 
+def print_devops_git_file_content(repo_id, file_path):
+    print(f'Azure DevOps file content for {file_path}:')
+    url = f'https://dev.azure.com/{az_devops_organization}/_apis/git/repositories/{repo_id}/items?path={file_path}&includeContent=true&api-version=6.0'
+    basic = HTTPBasicAuth('', az_devops_pat)
+    response = requests.get(url, auth=basic)
+    if response.ok and response.status_code == 200:
+        print(response.text)
+    else:
+        print('Error for:', url)
+
+
 def print_terraform_modules():
     print(f'Terraform Enterprise modules for organization {tfe_organization}:')
     url = f'https://{tfe_domain_name}/api/v2/organizations/{tfe_organization}/registry-modules'
@@ -114,6 +125,7 @@ if __name__ == '__main__':
     print()
     print_devops_search_results('tfe.azure.bnl-ms.myengie.com/engie-bnl-ms/portal-dashboard/azurerm')
     print()
+    print_devops_git_file_content('50bd7b13-fa67-4d28-8745-ab6ea6d3213f', '/envs/dev/iris/dashboards.tf')
     print_terraform_modules()
     print()
     print_terraform_workspaces()
