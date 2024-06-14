@@ -21,17 +21,22 @@ def print_devops_projects():
         print('Error for:', url)
 
 
-def print_devops_repositories():
-    print(f'Azure DevOps repositories for organization {az_devops_organization}:')
+def print_devops_search_results(search_text):
+    print(f'Azure DevOps search results for {search_text}:')
     project = 'AzureFoundation'
     url = f'https://almsearch.dev.azure.com/{az_devops_organization}/{project}/_apis/search/codesearchresults?api-version=6.0-preview.1'
     headers = {
         'Content-Type': 'application/json',
     }
     basic = HTTPBasicAuth('', az_devops_pat)
-    response = requests.post(url, auth=basic, headers=headers, data={'searchText': 'Dashboard', 'includeFacets': True})
+    response = requests.post(url, auth=basic, headers=headers, json={'searchText': search_text,
+                                                                     'includeFacets': True,
+                                                                     'includeSnippet': True,
+                                                                     '$Top': 1000})
     if response.ok and response.status_code == 200:
-        print(response.json())
+        result = response.json()
+        for item in result['results']:
+            print(item)
     else:
         print('Error for:', url)
         print(response.json())
@@ -107,10 +112,11 @@ def print_terraform_workspace_resources(workspace_id):
 if __name__ == '__main__':
     print_devops_projects()
     print()
+    print_devops_search_results('tfe.azure.bnl-ms.myengie.com/engie-bnl-ms/portal-dashboard/azurerm')
+    print()
     print_terraform_modules()
     print()
     print_terraform_workspaces()
     print()
-    print_devops_repositories()
-    print()
     print_terraform_workspace_resources('ws-hHbeMQKxPJvuLbUb')
+    print()
