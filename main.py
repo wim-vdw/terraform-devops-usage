@@ -126,6 +126,7 @@ if __name__ == '__main__':
     print_devops_search_results('tfe.azure.bnl-ms.myengie.com/engie-bnl-ms/portal-dashboard/azurerm')
     print()
     print_devops_git_file_content('50bd7b13-fa67-4d28-8745-ab6ea6d3213f', '/envs/dev/iris/dashboards.tf')
+    print()
     print_terraform_modules()
     print()
     print_terraform_workspaces()
