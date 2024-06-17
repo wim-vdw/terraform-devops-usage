@@ -11,7 +11,7 @@ tfe_token = os.environ.get('TFE_TOKEN')
 
 def print_devops_projects():
     print(f'Azure DevOps projects for organization {az_devops_organization}:')
-    url = f'https://dev.azure.com/{az_devops_organization}/_apis/projects?api-version=7.2-preview.4'
+    url = f'https://dev.azure.com/{az_devops_organization}/_apis/projects?api-version=7.1-preview.4'
     basic = HTTPBasicAuth('', az_devops_pat)
     response = requests.get(url, auth=basic)
     if response.ok and response.status_code == 200:
@@ -24,7 +24,7 @@ def print_devops_projects():
 def print_devops_search_results(search_text):
     print(f'Azure DevOps search results for {search_text}:')
     project = 'AzureFoundation'
-    url = f'https://almsearch.dev.azure.com/{az_devops_organization}/{project}/_apis/search/codesearchresults?api-version=6.0-preview.1'
+    url = f'https://almsearch.dev.azure.com/{az_devops_organization}/{project}/_apis/search/codesearchresults?api-version=7.1-preview.1'
     headers = {
         'Content-Type': 'application/json',
     }
@@ -45,7 +45,8 @@ def print_devops_search_results(search_text):
 
 def print_devops_git_file_content(repo_id, file_path):
     print(f'Azure DevOps file content for {file_path}:')
-    url = f'https://dev.azure.com/{az_devops_organization}/_apis/git/repositories/{repo_id}/items?path={file_path}&includeContent=true&api-version=6.0'
+    project = 'AzureFoundation'
+    url = f'https://dev.azure.com/{az_devops_organization}/{project}/_apis/git/repositories/{repo_id}/items?path={file_path}&includeContent=true&api-version=7.1-preview.1'
     basic = HTTPBasicAuth('', az_devops_pat)
     response = requests.get(url, auth=basic)
     if response.ok and response.status_code == 200:
@@ -126,6 +127,7 @@ if __name__ == '__main__':
     print_devops_search_results('tfe.azure.bnl-ms.myengie.com/engie-bnl-ms/portal-dashboard/azurerm')
     print()
     print_devops_git_file_content('50bd7b13-fa67-4d28-8745-ab6ea6d3213f', '/envs/dev/iris/dashboards.tf')
+    print()
     print_terraform_modules()
     print()
     print_terraform_workspaces()
