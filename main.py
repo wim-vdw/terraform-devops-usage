@@ -1,6 +1,7 @@
 import os
 import requests
 from requests.auth import HTTPBasicAuth
+from helpers import AzureDevOpsClient, TerraformClient
 
 az_devops_organization = os.environ.get('AZ_DEVOPS_ORGANIZATION')
 az_devops_pat = os.environ.get('AZ_DEVOPS_PAT')
@@ -122,15 +123,29 @@ def print_terraform_workspace_resources(workspace_id):
 
 
 if __name__ == '__main__':
-    print_devops_projects()
-    print()
-    print_devops_search_results('tfe.azure.bnl-ms.myengie.com/engie-bnl-ms/portal-dashboard/azurerm')
-    print()
-    print_devops_git_file_content('50bd7b13-fa67-4d28-8745-ab6ea6d3213f', '/envs/dev/iris/dashboards.tf')
-    print()
-    print_terraform_modules()
-    print()
-    print_terraform_workspaces()
-    print()
-    print_terraform_workspace_resources('ws-hHbeMQKxPJvuLbUb')
-    print()
+    # print_devops_projects()
+    # print()
+    # print_devops_search_results('tfe.azure.bnl-ms.myengie.com/engie-bnl-ms/portal-dashboard/azurerm')
+    # print()
+    # print_devops_git_file_content('50bd7b13-fa67-4d28-8745-ab6ea6d3213f', '/envs/dev/iris/dashboards.tf')
+    # print()
+    # print_terraform_modules()
+    # print()
+    # print_terraform_workspaces()
+    # print()
+    # print_terraform_workspace_resources('ws-hHbeMQKxPJvuLbUb')
+    # print()
+    az_client = AzureDevOpsClient(organization=az_devops_organization, pat_token=az_devops_pat)
+    tf_client = TerraformClient(organization=tfe_organization, token=tfe_token, domain_name=tfe_domain_name)
+    repos = az_client.get_projects()
+    print(repos)
+    code = az_client.get_file_content(project='AzureFoundation',
+                                      repo_id='50bd7b13-fa67-4d28-8745-ab6ea6d3213f',
+                                      file_path='/envs/dev/iris/dashboards.tf')
+    print(code)
+    search_results = az_client.search_code(project='AzureFoundation',
+                                           search_text='tfe.azure.bnl-ms.myengie.com/engie-bnl-ms/portal-dashboard/azurerm')
+    print(search_results)
+    modules = tf_client.get_modules()
+    for module in modules:
+        print(module)
