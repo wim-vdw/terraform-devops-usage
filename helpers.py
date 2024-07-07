@@ -63,3 +63,7 @@ class TerraformClient:
             else:
                 break
         return modules
+
+    @staticmethod
+    def build_search_text(domain_name, organization, name, provider):
+        return f'{domain_name}/{organization}/{name}/{provider}'
