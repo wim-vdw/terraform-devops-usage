@@ -1,7 +1,6 @@
 import os
 import requests
 from requests.auth import HTTPBasicAuth
-from helpers import AzureDevOpsClient, TerraformClient
 
 az_devops_organization = os.environ.get('AZ_DEVOPS_ORGANIZATION')
 az_devops_pat = os.environ.get('AZ_DEVOPS_PAT')
