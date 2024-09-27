@@ -11,18 +11,39 @@ class AzureDevOpsClient:
         self.auth = HTTPBasicAuth('', pat_token)
 
     def get_projects(self):
-        url = self.base_url + '_apis/projects?api-version=7.2-preview.4'
-        response = requests.get(url, auth=self.auth)
+        url = self.base_url + '_apis/projects'
+        params = {
+            'api-version': '7.2-preview.4',
+        }
+        response = requests.get(url, auth=self.auth, params=params)
         if response.ok and response.status_code == 200:
             return response.json()
         else:
             return None
 
     def get_file_content(self, project, repo_id, file_path):
-        url = self.base_url + f'{project}/_apis/git/repositories/{repo_id}/items?path={file_path}&api-version=7.1'
-        response = requests.get(url, auth=self.auth)
+        url = self.base_url + f'{project}/_apis/git/repositories/{repo_id}/items'
+        params = {
+            'api-version': '7.1',
+            'path': file_path,
+        }
+        response = requests.get(url, auth=self.auth, params=params)
         if response.ok and response.status_code == 200:
             return response.text
+        else:
+            return None
+
+    def get_files(self, project, repo_id, scope_path='/'):
+        url = self.base_url + f'{project}/_apis/git/repositories/{repo_id}/items'
+        params = {
+            'api-version': '7.1',
+            'recursionLevel': 'Full',
+            'includeContent': False,
+            'scopePath': scope_path,
+        }
+        response = requests.get(url, auth=self.auth, params=params)
+        if response.ok and response.status_code == 200:
+            return response.json()
         else:
             return None
 
