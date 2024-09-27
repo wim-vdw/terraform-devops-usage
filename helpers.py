@@ -38,7 +38,6 @@ class AzureDevOpsClient:
         params = {
             'api-version': '7.1',
             'recursionLevel': 'Full',
-            'includeContent': False,
             'scopePath': scope_path,
         }
         response = requests.get(url, auth=self.auth, params=params)
