@@ -65,6 +65,21 @@ class TerraformClient:
                 break
         return modules
 
+    def get_workspaces(self):
+        workspaces = []
+        url = self.base_url + f'organizations/{self.organization}/workspaces'
+        while True:
+            response = requests.get(url, headers=self.headers, verify=self.verify)
+            if response.ok:
+                result = response.json()
+                workspaces.extend(result['data'])
+                url = result['links']['next']
+                if not url:
+                    break
+            else:
+                break
+        return workspaces
+
     @staticmethod
     def build_search_text(domain_name, organization, name, provider):
         return f'{domain_name}/{organization}/{name}/{provider}'
