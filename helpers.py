@@ -39,10 +39,11 @@ class AzureDevOpsClient:
 
 
 class TerraformClient:
-    def __init__(self, organization, token, domain_name):
+    def __init__(self, organization, token, domain_name, verify=True):
         self.organization = organization
         self.token = token
         self.domain_name = domain_name
+        self.verify = verify
         self.base_url = f'https://{domain_name}/api/v2/'
         self.headers = {
             'Authorization': 'Bearer ' + token,
@@ -53,7 +54,7 @@ class TerraformClient:
         modules = []
         url = self.base_url + f'organizations/{self.organization}/registry-modules'
         while True:
-            response = requests.get(url, headers=self.headers)
+            response = requests.get(url, headers=self.headers, verify=self.verify)
             if response.ok:
                 result = response.json()
                 modules.extend(result['data'])

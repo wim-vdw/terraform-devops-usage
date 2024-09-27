@@ -1,4 +1,5 @@
 import os
+
 from helpers import AzureDevOpsClient, TerraformClient
 
 az_devops_organization = os.environ.get('AZ_DEVOPS_ORGANIZATION')
@@ -18,7 +19,8 @@ if __name__ == '__main__':
                                   pat_token=az_devops_pat)
     tf_client = TerraformClient(organization=tfe_organization,
                                 token=tfe_token,
-                                domain_name=tfe_domain_name)
+                                domain_name=tfe_domain_name,
+                                verify=False)
     modules = tf_client.get_modules()
     for module in modules:
         search_text = build_search_text(domain_name=tfe_domain_name,
