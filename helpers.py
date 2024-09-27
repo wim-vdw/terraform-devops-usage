@@ -48,11 +48,15 @@ class AzureDevOpsClient:
             return None
 
     def search_code(self, project, search_text):
-        url = self.base_url_alm_search + f'{project}/_apis/search/codesearchresults?api-version=7.2-preview.1'
-        response = requests.post(url, auth=self.auth, json={'searchText': search_text,
-                                                            'includeFacets': True,
-                                                            'includeSnippet': True,
-                                                            '$Top': 1000})
+        url = self.base_url_alm_search + f'{project}/_apis/search/codesearchresults'
+        params = {
+            'api-version': '7.2-preview.1',
+        }
+        response = requests.post(url, auth=self.auth, params=params,
+                                 json={'searchText': search_text,
+                                       'includeFacets': True,
+                                       'includeSnippet': True,
+                                       '$Top': 1000})
         if response.ok and response.status_code == 200:
             return response.json()
         else:
