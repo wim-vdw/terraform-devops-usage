@@ -25,7 +25,7 @@ if __name__ == '__main__':
         repo_url = workspace['attributes']['vcs-repo']['repository-http-url']
         repo_id = str(workspace['attributes']['vcs-repo']['identifier']).split('/')[-1]
         print(tf_workspace, '=>', repo_url, '=>', working_dir)
-        if tf_workspace.startswith('Squad-SAP-I'):
+        if tf_workspace.endswith('Sup'):
             files = az_client.get_files(az_devops_project, repo_id, scope_path=working_dir)
             if files:
                 for file in files['value']:
