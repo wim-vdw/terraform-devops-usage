@@ -24,16 +24,15 @@ if __name__ == '__main__':
                                 verify=False)
     workspaces = tf_client.get_workspaces()
     for workspace in workspaces:
-        if workspace['attributes']['name'] == 'Squad-SAP-Int':
-            tf_workspace= workspace['attributes']['name']
-            working_dir = workspace['attributes']['working-directory']
-            repo_url = workspace['attributes']['vcs-repo']['repository-http-url']
-            repo_id = str(workspace['attributes']['vcs-repo']['identifier']).split('/')[-1]
-            path = workspace['attributes']['working-directory']
-            files = az_client.get_files(az_devops_project, repo_id, scope_path=path)
-            if files:
-                print(files['count'])
-                for file in files['value']:
-                    print(file)
-            else:
-                print('No files found!')
+        tf_workspace = workspace['attributes']['name']
+        working_dir = workspace['attributes']['working-directory']
+        repo_url = workspace['attributes']['vcs-repo']['repository-http-url']
+        repo_id = str(workspace['attributes']['vcs-repo']['identifier']).split('/')[-1]
+        path = workspace['attributes']['working-directory']
+        files = az_client.get_files(az_devops_project, repo_id, scope_path=path)
+        if files:
+            print(files['count'])
+            for file in files['value']:
+                print(file)
+        else:
+            print('No files found!')
