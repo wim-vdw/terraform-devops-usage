@@ -27,8 +27,8 @@ if __name__ == '__main__':
         working_dir = workspace['attributes']['working-directory']
         repo_url = workspace['attributes']['vcs-repo']['repository-http-url']
         repo_id = str(workspace['attributes']['vcs-repo']['identifier']).split('/')[-1]
-        path = workspace['attributes']['working-directory']
-        files = az_client.get_files(az_devops_project, repo_id, scope_path=path)
+        print(tf_workspace, '=>', repo_url, '=>', working_dir)
+        files = az_client.get_files(az_devops_project, repo_id, scope_path=working_dir)
         if files:
             print(files['count'])
             for file in files['value']:
