@@ -29,35 +29,34 @@ def scan_all_workspaces():
         repo_url = workspace['attributes']['vcs-repo']['repository-http-url']
         repo_id = str(workspace['attributes']['vcs-repo']['identifier']).split('/')[-1]
         print(tf_workspace, '=>', repo_url, '=>', working_dir)
-        if tf_workspace.endswith('Int'):
-            files = az_client.get_files(az_devops_project, repo_id, scope_path=working_dir)
-            if files:
-                for file in files['value']:
-                    if 'isFolder' not in file and str(file['path']).lower().endswith('tf'):
-                        file_path = str(file['path'])
-                        content = az_client.get_file_content(az_devops_project, repo_id, file_path)
-                        print(file_path)
-                        file_path_full = repo_url + '?path=' + file_path
-                        try:
-                            content_parsed = hcl2.loads(content)
-                            if 'terraform' in content_parsed:
-                                tf_data = content_parsed['terraform']
-                                for item in tf_data:
-                                    if 'required_providers' in item:
-                                        for provider in item['required_providers']:
-                                            if 'azurerm' in provider:
-                                                version = provider['azurerm'].get('version', None)
-                                                print(version)
-                                                result[tf_workspace].append({
-                                                    'repo_id': repo_id,
-                                                    'file_path': file_path,
-                                                    'file_path_full': file_path_full,
-                                                    'version': version,
-                                                })
-                        except Exception as e:
-                            print("Error parsing file, please check manually.")
-            else:
-                print('No files found!')
+        files = az_client.get_files(az_devops_project, repo_id, scope_path=working_dir)
+        if files:
+            for file in files['value']:
+                if 'isFolder' not in file and str(file['path']).lower().endswith('tf'):
+                    file_path = str(file['path'])
+                    content = az_client.get_file_content(az_devops_project, repo_id, file_path)
+                    print(file_path)
+                    file_path_full = repo_url + '?path=' + file_path
+                    try:
+                        content_parsed = hcl2.loads(content)
+                        if 'terraform' in content_parsed:
+                            tf_data = content_parsed['terraform']
+                            for item in tf_data:
+                                if 'required_providers' in item:
+                                    for provider in item['required_providers']:
+                                        if 'azurerm' in provider:
+                                            version = provider['azurerm'].get('version', None)
+                                            print(version)
+                                            result[tf_workspace].append({
+                                                'repo_id': repo_id,
+                                                'file_path': file_path,
+                                                'file_path_full': file_path_full,
+                                                'version': version,
+                                            })
+                    except Exception as e:
+                        print("Error parsing file, please check manually.")
+        else:
+            print('No files found!')
     return result
 
 
