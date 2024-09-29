@@ -90,7 +90,8 @@ def scan_all_modules():
 
 
 def generate_markdown_link(link, description):
-    encoded_url = urllib.parse.quote(link, safe=":/?&=")
+    encoded_url = urllib.parse.quote(string=link,
+                                     safe=":/?&=")
     return f'[{description}]({encoded_url})'
 
 
@@ -98,7 +99,8 @@ def generate_list_from_dict(data):
     result = []
     for name in sorted(data):
         for item in data[name]:
-            markdown_link = generate_markdown_link(item['file_path_full'], item['file_path'])
+            markdown_link = generate_markdown_link(link=item['file_path_full'],
+                                                   description=item['file_path'])
             repo_id = item['repo_id']
             version = item['version']
             if not version:
@@ -108,14 +110,17 @@ def generate_list_from_dict(data):
 
 
 def generate_markdown_table(headers, data, table_format='github'):
-    return tabulate.tabulate(tabular_data=data, headers=headers, tablefmt=table_format)
+    return tabulate.tabulate(tabular_data=data,
+                             headers=headers,
+                             tablefmt=table_format)
 
 
 def generate_report_terraform_workspaces():
     tf_workspaces = scan_all_workspaces()
-    table_data = generate_list_from_dict(tf_workspaces)
+    table_data = generate_list_from_dict(data=tf_workspaces)
     table_headers = ['Terraform workspace', 'GIT repo', 'File', 'AzureRM version']
-    markdown_table = generate_markdown_table(headers=table_headers, data=table_data)
+    markdown_table = generate_markdown_table(headers=table_headers,
+                                             data=table_data)
     markdown_report = '# Azure provider version in Terraform workspaces\n' + markdown_table
     with open(output_file_tf_workspaces, 'w') as f:
         f.write(markdown_report)
@@ -123,9 +128,10 @@ def generate_report_terraform_workspaces():
 
 def generate_report_terraform_modules():
     tf_modules = scan_all_modules()
-    table_data = generate_list_from_dict(tf_modules)
+    table_data = generate_list_from_dict(data=tf_modules)
     table_headers = ['Terraform module', 'GIT repo', 'File', 'AzureRM version']
-    markdown_table = generate_markdown_table(headers=table_headers, data=table_data)
+    markdown_table = generate_markdown_table(headers=table_headers,
+                                             data=table_data)
     markdown_report = '# Azure provider version in Terraform modules\n' + markdown_table
     with open(output_file_tf_modules, 'w') as f:
         f.write(markdown_report)
