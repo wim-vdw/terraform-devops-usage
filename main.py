@@ -14,7 +14,7 @@ output_file_tf_workspaces = os.environ.get('OUTPUT_FILE_TF_WORKSPACES')
 output_file_tf_modules = os.environ.get('OUTPUT_FILE_TF_MODULES')
 
 
-def get_repo_details(repo_id, repo_url, working_dir):
+def get_azurerm_version_details_in_repo(repo_id, repo_url, working_dir):
     result = []
     az_client = AzureDevOpsClient(organization=az_devops_organization,
                                   pat_token=az_devops_pat)
@@ -62,8 +62,8 @@ def scan_all_workspaces():
         repo_url = workspace['attributes']['vcs-repo']['repository-http-url']
         repo_id = str(workspace['attributes']['vcs-repo']['identifier']).split('/')[-1]
         print(tf_workspace_name, '=>', repo_url, '=>', working_dir)
-        repo_details = get_repo_details(repo_id, repo_url, working_dir)
-        result[tf_workspace_name] = repo_details
+        azurerm_version_details = get_azurerm_version_details_in_repo(repo_id, repo_url, working_dir)
+        result[tf_workspace_name] = azurerm_version_details
     return result
 
 
@@ -80,7 +80,7 @@ def scan_all_modules():
         repo_url = tf_module['attributes']['vcs-repo']['repository-http-url']
         repo_id = str(tf_module['attributes']['vcs-repo']['identifier']).split('/')[-1]
         print(tf_module_name, '=>', repo_url, '=>', working_dir)
-        repo_details = get_repo_details(repo_id, repo_url, working_dir)
+        repo_details = get_azurerm_version_details_in_repo(repo_id, repo_url, working_dir)
         result[tf_module_name] = repo_details
     return result
 
@@ -104,7 +104,7 @@ def generate_list_from_dict(data):
 
 
 def generate_markdown_table(headers, data, table_format='github'):
-    return tabulate.tabulate(data, headers=headers, tablefmt=table_format)
+    return tabulate.tabulate(tabular_data=data, headers=headers, tablefmt=table_format)
 
 
 def generate_report_terraform_workspaces():
