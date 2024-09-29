@@ -18,12 +18,16 @@ def get_azurerm_version_details_in_repo(repo_id, repo_url, working_dir):
     result = []
     az_client = AzureDevOpsClient(organization=az_devops_organization,
                                   pat_token=az_devops_pat)
-    files = az_client.get_files(project=az_devops_project, repo_id=repo_id, scope_path=working_dir)
+    files = az_client.get_files(project=az_devops_project,
+                                repo_id=repo_id,
+                                scope_path=working_dir)
     if files:
         for file in files['value']:
             if 'isFolder' not in file and str(file['path']).lower().endswith('tf'):
                 file_path = str(file['path'])
-                content = az_client.get_file_content(az_devops_project, repo_id, file_path)
+                content = az_client.get_file_content(project=az_devops_project,
+                                                     repo_id=repo_id,
+                                                     file_path=file_path)
                 print(file_path)
                 file_path_full = repo_url + '?path=' + file_path
                 try:
