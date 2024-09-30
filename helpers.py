@@ -29,7 +29,7 @@ class AzureDevOpsClient:
         }
         response = requests.get(url, auth=self.auth, params=params)
         if response.ok and response.status_code == 200:
-            return response.text
+            return response.text.replace('\r', '')
         else:
             return None
 
