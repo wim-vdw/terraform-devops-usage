@@ -108,7 +108,7 @@ def generate_list_from_dict(data):
             repo_id = item['repo_id']
             version = item['version']
             if not version:
-                version = '⚠️ Not found ⚠️'
+                version = 'Not found :warning:'
             result.append([name, repo_id, markdown_link, version])
     return result
 
